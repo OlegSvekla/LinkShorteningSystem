@@ -15,7 +15,6 @@ namespace LinkShorteningSystem.Infrastructure
         public static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             services.AddDbContext<CatalogContext>(context => context.UseSqlServer(configuration.GetConnectionString("LinkConnection")));
-            //services.AddDbContext<AppIdentityDbContext>(context => context.UseSqlServer(configuration.GetConnectionString("IdentityConnection")));
             services.AddDbContext<ApiContext>(context => context.UseSqlServer(configuration.GetConnectionString("LinkApiConnection")));
         }
     }
