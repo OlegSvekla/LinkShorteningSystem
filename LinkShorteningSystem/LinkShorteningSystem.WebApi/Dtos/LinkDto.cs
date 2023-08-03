@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LinkShorteningSystem.Domain.Dtos
+namespace LinkShorteningSystem.WebApi.Dtos
 {
     public sealed class LinkDto
     {
