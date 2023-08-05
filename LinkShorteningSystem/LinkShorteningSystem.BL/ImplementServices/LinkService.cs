@@ -4,6 +4,7 @@ using LinkShorteningSystem.Domain.Interfaces.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,10 +19,9 @@ namespace LinkShorteningSystem.BL.ImplementServices
             _linkRepository = linkRepository;
         }
 
-        public async Task<string> ShortenLinkAsync(string originalUrl)
+        public async Task<string> ShortenLinkAsync(string baseClientUrl, string originalUrl)
         {
-            // Генерируем случайный набор символов для сокращенной ссылки
-            string shortenedUrl = GenerateShortenedUrl();
+            var shortenedUrl = GenerateShortenedUrl(baseClientUrl);
 
             var link = new Link
             {
@@ -49,10 +49,11 @@ namespace LinkShorteningSystem.BL.ImplementServices
             return link?.OriginalUrl;
         }
 
-        private static string GenerateShortenedUrl()
+        private static string GenerateShortenedUrl(string baseClientUrl)
         {
-            // Генерируем случайный набор символов для сокращенной ссылки, например, с помощью GUID
-            return Guid.NewGuid().ToString("N").Substring(0, 7);
+            var randomChars = Guid.NewGuid().ToString("N").Substring(0, 7);
+            var shortenedUrl = $"{baseClientUrl}/{randomChars}";
+            return shortenedUrl;
         }
     }
 }

@@ -1,24 +1,49 @@
-﻿using LinkShorteningSystem.Domain.Interfaces.Services;
-using LinkShorteningSystem.WebApi.Dtos;
-using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using System.Text.Json;
+﻿using Microsoft.AspNetCore.Mvc;
+using LinkShorteningSystem.HttpClients;
 
 namespace LinkShorteningSystem.Controllers
 {
     public class LinkController : Controller
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILinkShorteningSystemHttpClient _client;
 
-        public LinkController(IHttpClientFactory httpClientFactory)
+        public LinkController(ILinkShorteningSystemHttpClient client)
         {
-            _httpClientFactory = httpClientFactory;
+            _client = client;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RedirectLink(string shortenedUrl)
+        {
+            if (string.IsNullOrEmpty(shortenedUrl))
+            {
+                return BadRequest("Please provide a shortened URL.");
+            }
+
+            try
+            {
+                var baseUrl = GetBaseUrl();
+                var originalUrl = await _client.GetAsync(baseUrl, shortenedUrl);
+
+                if (!string.IsNullOrEmpty(originalUrl))
+                {
+                    return Redirect(originalUrl);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while redirecting.");
+            }
         }
 
         [HttpPost]
@@ -32,37 +57,32 @@ namespace LinkShorteningSystem.Controllers
 
             try
             {
-                using (var client = _httpClientFactory.CreateClient())
+                var baseUrl = GetBaseUrl();
+                var shortenedLink = await _client.CutLinkAsync(baseUrl, originalUrl);
+                if (string.IsNullOrEmpty(shortenedLink))
                 {
-                    // Устанавливаем базовый адрес для HttpClient (адрес Web API проекта)
-                    client.BaseAddress = new Uri("https://localhost:7151/");
-
-                    // Создаем объект для отправки данных в формате JSON
-                    var data = new { OriginalUrl = originalUrl };
-                    var jsonContent = new StringContent(JsonSerializer.Serialize(data,
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }), Encoding.UTF8, "application/json");
-
-                    // Отправляем POST-запрос к Web API проекту
-                    var response = await client.PostAsync("api/LinkApi/ShortenLink", jsonContent);
-
-                    // Обработка ответа от Web API проекта
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var shortenedUrl = await response.Content.ReadAsStringAsync();
-                        ViewBag.ShortenedUrl = shortenedUrl;
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "An error occurred while shortening the URL.");
-                    }
+                    ModelState.AddModelError("", "An error occurred while shortening the URL.");
+                }
+                else
+                {
+                    ViewBag.ShortenedUrl = shortenedLink;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ModelState.AddModelError("", "An error occurred while shortening the URL.");
+                return View("Index");
             }
 
-            return View("Index");
+            return View("Redirect");
+        }
+
+        private string GetBaseUrl()
+        {
+            var schema = HttpContext.Request.Scheme;
+            var host = HttpContext.Request.Host.Value;
+            var baseUrl = $"{schema}://{host}";
+            return baseUrl;
         }
     }
 }

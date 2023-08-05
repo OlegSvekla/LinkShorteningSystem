@@ -1,44 +1,50 @@
-using LinkShorteningSystem;
-using LinkShorteningSystem.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using LinkShorteningSystem;
+using LinkShorteningSystem.HttpClients;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
-LinkShorteningSystem.Infrastructure.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 
-//IoC
-builder.Services.AddCoreServices();
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+
+// Çàãðóçêà êîíôèãóðàöèè èç ôàéëà launchSettings.json àïè ïðîåêòà
+//var config = new ConfigurationBuilder()
+//    .SetBasePath(builder.Environment.ContentRootPath)
+//    .AddJsonFile("../LinkShorteningSystem.MVC/src/LinkShorteningSystem/appsettings.json", optional: true, reloadOnChange: true)
+//    .Build();
+
+//var baseAddress = config["baseUrls:apiBase"];
+//builder.Services.AddHttpClient<ILinkShorteningSystemHttpClient, LinkShorteningSystemHttpClient>()
+//    .ConfigureHttpClient(cfg =>
+//    {
+
+//        // TODO: MUST BE LOADED FROM CONFIGURATION
+//        cfg.BaseAddress = new Uri(baseAddress);
+//        cfg.Timeout = TimeSpan.FromSeconds(30);
+//    });
+
+// blazor configuration
+var configSection = builder.Configuration.GetRequiredSection(HostConfig.CONFIG_NAME);
+builder.Services.Configure<HostConfig>(configSection);
+var baseUrlConfig = configSection.Get<HostConfig>();
+
+// Blazor Admin Required Services for Prerendering
+builder.Services.AddHttpClient<ILinkShorteningSystemHttpClient, LinkShorteningSystemHttpClient>()
+    .ConfigureHttpClient(cfg =>
+    {
+
+        // TODO: MUST BE LOADED FROM CONFIGURATION
+        cfg.BaseAddress = new Uri(baseUrlConfig.ApiBase);
+        cfg.Timeout = TimeSpan.FromSeconds(30);
+    });
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var scopedProvider = scope.ServiceProvider;
-    try
-    {
-        var catalogContext = scopedProvider.GetRequiredService<CatalogContext>();
-        if (catalogContext.Database.IsSqlServer())
-        {
-            catalogContext.Database.Migrate();
-        }
-        await CatalogContextSeed.SeedAsync(catalogContext, app.Logger);
-
-        //var identityContext = scopedProvider.GetRequiredService<AppIdentityDbContext>();
-        //if (identityContext.Database.IsSqlServer())
-        //{
-            //identityContext.Database.Migrate();
-        //}
-    }
-    catch (Exception ex)
-    {
-        app.Logger.LogError(ex, "An error occured addition migrations to Database");
-    }
-}
-
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -54,11 +60,15 @@ app.MapRazorPages();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapControllers();
+    endpoints.MapControllerRoute(
+        name: "redirect",
+        pattern: "{shortenedUrl}",
+        defaults: new { controller = "Link", action = "RedirectLink" });
+
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Link}/{action=Index}/{id?}");
 });
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Link}/{action=Index}/{id?}");
 
 app.Run();
