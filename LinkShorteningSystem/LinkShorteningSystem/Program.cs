@@ -1,46 +1,52 @@
-﻿using LinkShorteningSystem;
+using LinkShorteningSystem;
 using LinkShorteningSystem.HttpClients;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+using LinkShorteningSystem.Infrastructure;
+using LinkShorteningSystem.Infrastructure.Data;
+using LinkShorteningSystem.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-// Çàãðóçêà êîíôèãóðàöèè èç ôàéëà launchSettings.json àïè ïðîåêòà
-//var config = new ConfigurationBuilder()
-//    .SetBasePath(builder.Environment.ContentRootPath)
-//    .AddJsonFile("../LinkShorteningSystem.MVC/src/LinkShorteningSystem/appsettings.json", optional: true, reloadOnChange: true)
-//    .Build();
+builder.Services
+    .AddIdentity<ApplicationUser, IdentityRole>()
+    .AddDefaultUI()
+    .AddEntityFrameworkStores<AppIdentityDbContext>()
+    .AddDefaultTokenProviders();
 
-//var baseAddress = config["baseUrls:apiBase"];
-//builder.Services.AddHttpClient<ILinkShorteningSystemHttpClient, LinkShorteningSystemHttpClient>()
-//    .ConfigureHttpClient(cfg =>
-//    {
-
-//        // TODO: MUST BE LOADED FROM CONFIGURATION
-//        cfg.BaseAddress = new Uri(baseAddress);
-//        cfg.Timeout = TimeSpan.FromSeconds(30);
-//    });
-
-// blazor configuration
 var configSection = builder.Configuration.GetRequiredSection(HostConfig.CONFIG_NAME);
 builder.Services.Configure<HostConfig>(configSection);
 var baseUrlConfig = configSection.Get<HostConfig>();
 
-// Blazor Admin Required Services for Prerendering
 builder.Services.AddHttpClient<ILinkShorteningSystemHttpClient, LinkShorteningSystemHttpClient>()
     .ConfigureHttpClient(cfg =>
     {
-
-        // TODO: MUST BE LOADED FROM CONFIGURATION
         cfg.BaseAddress = new Uri(baseUrlConfig.ApiBase);
         cfg.Timeout = TimeSpan.FromSeconds(30);
     });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var scopedProvider = scope.ServiceProvider;
+    try
+    {     
+        var identityContext = scopedProvider.GetRequiredService<AppIdentityDbContext>();
+        if (identityContext.Database.IsSqlServer())
+        {
+            identityContext.Database.Migrate();
+        }
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "An error occured addition migrations to Database");
+    }
+}
 
 if (!app.Environment.IsDevelopment())
 {
