@@ -3,7 +3,6 @@ using LinkShorteningSystem.Domain.Interfaces.Repositories;
 using LinkShorteningSystem.Domain.Interfaces.Services;
 using LinkShorteningSystem.Infrastructure;
 using LinkShorteningSystem.Infrastructure.Data;
-using LinkShorteningSystem.WebApi.Mapper;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +17,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped<ILinkService, LinkService>();
-builder.Services.AddAutoMapper(typeof(Map));
+
 
 var app = builder.Build();
 
@@ -27,7 +26,7 @@ using (var scope = app.Services.CreateScope())
     var scopedProvider = scope.ServiceProvider;
     try
     {
-        var catalogContext = scopedProvider.GetRequiredService<ApiContext>();
+        var catalogContext = scopedProvider.GetRequiredService<CatalogContext>();
         if (catalogContext.Database.IsSqlServer())
         {
             catalogContext.Database.Migrate();

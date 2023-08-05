@@ -2,9 +2,10 @@ using LinkShorteningSystem;
 using LinkShorteningSystem.HttpClients;
 
 var builder = WebApplication.CreateBuilder(args);
-LinkShorteningSystem.Infrastructure.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 
-builder.Services.AddCoreServices();
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 builder.Services.AddHttpClient<ILinkShorteningSystemHttpClient, LinkShorteningSystemHttpClient>()
     .ConfigureHttpClient(cfg =>
     {
@@ -31,10 +32,17 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-app.UseEndpoints(endpoints => endpoints.MapControllers());
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "redirect",
+        pattern: "{shortenedUrl}",
+        defaults: new { controller = "Link", action = "RedirectLink" });
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Link}/{action=Index}/{id?}");
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Link}/{action=Index}/{id?}");
+});
+
 
 app.Run();

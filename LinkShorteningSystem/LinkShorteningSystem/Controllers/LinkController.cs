@@ -18,6 +18,33 @@ namespace LinkShorteningSystem.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> RedirectLink(string shortenedUrl)
+        {
+            if (string.IsNullOrEmpty(shortenedUrl))
+            {
+                return BadRequest("Please provide a shortened URL.");
+            }
+
+            try
+            {
+                var originalUrl = await _client.GetAsync($"api/links/RedirectLink?shortenedUrl={$"https://localhost:7169/{shortenedUrl}"}");
+
+                if (!string.IsNullOrEmpty(originalUrl))
+                {
+                    return Redirect(originalUrl);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while redirecting.");
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> ShortenLink(string originalUrl)
         {
@@ -29,14 +56,6 @@ namespace LinkShorteningSystem.Controllers
 
             try
             {
-                // using var client = _httpClientFactory.CreateClient();
-                // client.BaseAddress = new Uri("https://localhost:7151/");
-                //
-                // var data = new { OriginalUrl = originalUrl };
-                // var jsonContent = new StringContent(JsonSerializer.Serialize(data,
-                //     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }), Encoding.UTF8, "application/json");
-                //
-                // var response = await client.PostAsync("api/LinkApi/ShortenLink", jsonContent);
 
                 var shortenedLink = await _client.CutLinkAsync(originalUrl);
                 if (string.IsNullOrEmpty(shortenedLink))
@@ -51,9 +70,10 @@ namespace LinkShorteningSystem.Controllers
             catch (Exception)
             {
                 ModelState.AddModelError("", "An error occurred while shortening the URL.");
+                return View("Index");
             }
 
-            return View("Index");
+            return View("Redirect");
         }
     }
 }

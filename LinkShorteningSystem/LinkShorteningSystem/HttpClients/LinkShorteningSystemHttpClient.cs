@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Polly;
 using Polly.Retry;
 
@@ -16,11 +17,26 @@ public class LinkShorteningSystemHttpClient : ILinkShorteningSystemHttpClient
     public LinkShorteningSystemHttpClient(HttpClient client)
     {
         _client = client;
+        _client.Timeout = TimeSpan.FromMinutes(1);
         _retryPolicy = Policy
             .Handle<HttpRequestException>()
             .WaitAndRetryAsync(RetryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
     }
-    
+
+    public async Task<string> GetAsync(string requestUri, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _client.GetAsync(requestUri, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync(cancellationToken);
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new Exception("An error occurred while executing the GET request.", ex);
+        }
+    }
+
     public async Task<string> CutLinkAsync(string origin, CancellationToken token = default)
     {
         return await _retryPolicy.ExecuteAsync(async () =>

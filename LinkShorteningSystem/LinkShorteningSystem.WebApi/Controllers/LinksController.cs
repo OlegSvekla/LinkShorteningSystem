@@ -2,6 +2,10 @@
 using LinkShorteningSystem.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Text;
+using System.Security.Policy;
 
 namespace LinkShorteningSystem.WebApi.Controllers
 {
@@ -17,6 +21,31 @@ namespace LinkShorteningSystem.WebApi.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet("RedirectLink")]
+        public async Task<IActionResult> RedirectLink(string shortenedUrl)
+        {
+            if (string.IsNullOrEmpty(shortenedUrl))
+            {
+                return BadRequest("Please provide a shortened URL.");
+            }
+
+            try
+            {
+                var originalUrl = await _linkService.GetOriginalLinkAsync(shortenedUrl);
+                if (string.IsNullOrEmpty(originalUrl))
+                {
+                    return NotFound();
+                }
+
+                return Ok(originalUrl);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while redirecting.");
+            }
+        }       
+
+        [AllowAnonymous]
         [HttpPost("ShortenLink")]
         public async Task<ActionResult<string>> ShortenLink([FromBody] LinkRequest request)
         {
@@ -28,7 +57,7 @@ namespace LinkShorteningSystem.WebApi.Controllers
             try
             {
                 var shortenedUrl = await _linkService.ShortenLinkAsync(request.OriginalLink);
-                return Ok(shortenedUrl);
+                return new JsonResult(shortenedUrl);
             }
             catch (Exception)
             {

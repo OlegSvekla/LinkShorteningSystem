@@ -16,10 +16,4 @@
     <PackageReference Include="Polly.Contrib.WaitAndRetry" Version="1.1.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\LinkShorteningSystem.BL\LinkShorteningSystem.BL.csproj" />
-    <ProjectReference Include="..\LinkShorteningSystem.Infrastructure\LinkShorteningSystem.Infrastructure.csproj" />
-    <ProjectReference Include="..\LinkShorteningSystem.WebApi\LinkShorteningSystem.WebApi.csproj" />
-  </ItemGroup>
-
 </Project>
