@@ -1,16 +1,42 @@
 using LinkShorteningSystem;
 using LinkShorteningSystem.HttpClients;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+// Загрузка конфигурации из файла launchSettings.json апи проекта
+//var config = new ConfigurationBuilder()
+//    .SetBasePath(builder.Environment.ContentRootPath)
+//    .AddJsonFile("../LinkShorteningSystem.MVC/src/LinkShorteningSystem/appsettings.json", optional: true, reloadOnChange: true)
+//    .Build();
+
+//var baseAddress = config["baseUrls:apiBase"];
+//builder.Services.AddHttpClient<ILinkShorteningSystemHttpClient, LinkShorteningSystemHttpClient>()
+//    .ConfigureHttpClient(cfg =>
+//    {
+        
+//        // TODO: MUST BE LOADED FROM CONFIGURATION
+//        cfg.BaseAddress = new Uri(baseAddress);
+//        cfg.Timeout = TimeSpan.FromSeconds(30);
+//    });
+
+// blazor configuration
+var configSection = builder.Configuration.GetRequiredSection(HostConfig.CONFIG_NAME);
+builder.Services.Configure<HostConfig>(configSection);
+var baseUrlConfig = configSection.Get<HostConfig>();
+
+// Blazor Admin Required Services for Prerendering
 builder.Services.AddHttpClient<ILinkShorteningSystemHttpClient, LinkShorteningSystemHttpClient>()
     .ConfigureHttpClient(cfg =>
     {
+
         // TODO: MUST BE LOADED FROM CONFIGURATION
-        cfg.BaseAddress = new Uri("http://localhost:5176");
+        cfg.BaseAddress = new Uri(baseUrlConfig.ApiBase);
         cfg.Timeout = TimeSpan.FromSeconds(30);
     });
 

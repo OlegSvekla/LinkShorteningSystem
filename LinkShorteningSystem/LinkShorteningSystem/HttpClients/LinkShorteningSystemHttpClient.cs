@@ -23,13 +23,13 @@ public class LinkShorteningSystemHttpClient : ILinkShorteningSystemHttpClient
             .WaitAndRetryAsync(RetryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
     }
 
-    public async Task<string> GetAsync(string shortenedUrl, CancellationToken cancellationToken = default)
+    public async Task<string> GetAsync(string baseUrl, string shortenedUrl, CancellationToken cancellationToken = default)
     {
         const string endpoint = "api/links/RedirectLink";
         
         return await _retryPolicy.ExecuteAsync(async () =>
-        {
-            var requestUri = $"{endpoint}?shortenedUrl={$"https://localhost:7169/{shortenedUrl}"}";
+        {            
+            var requestUri = $"{endpoint}?shortenedUrl={$"{baseUrl}/{shortenedUrl}"}";
             var response = await _client.GetAsync(requestUri, cancellationToken);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync(cancellationToken);

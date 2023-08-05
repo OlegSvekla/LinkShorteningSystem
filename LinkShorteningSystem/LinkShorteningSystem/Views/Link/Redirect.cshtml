@@ -3,21 +3,12 @@
 }
 
 <h2>@ViewData["Title"]</h2>
-<h2>@ViewBag.ShortenedUrl</h2>
 
 @if (ViewBag.ShortenedUrl != null)
 {
     <div class="mt-4">
-        <h4>Shortened URL:</h4>
+        <h4>Your Shortened URL:</h4>
         <a href="@ViewBag.ShortenedUrl" target="_blank">@ViewBag.ShortenedUrl</a>
     </div>
+    <p>Вот ваша короткая ссылка</p>
 }
-
-<!-- Форма для ввода короткой ссылки -->
-<form method="get" asp-action="Redirect">
-    <div class="form-group">
-        <label for="shortenedUrl">Enter the shortened URL:</label>
-        <input type="text" class="form-control" name="shortenedUrl" id="shortenedUrl" required />
-    </div>
-    <button type="submit" class="btn btn-primary">Redirect</button>
-</form>

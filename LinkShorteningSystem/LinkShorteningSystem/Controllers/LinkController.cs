@@ -28,7 +28,8 @@ namespace LinkShorteningSystem.Controllers
 
             try
             {
-                var originalUrl = await _client.GetAsync(shortenedUrl);
+                var baseUrl = GetBaseUrl();
+                var originalUrl = await _client.GetAsync(baseUrl, shortenedUrl);
 
                 if (!string.IsNullOrEmpty(originalUrl))
                 {
