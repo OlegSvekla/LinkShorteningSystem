@@ -28,7 +28,7 @@ namespace LinkShorteningSystem.Controllers
 
             try
             {
-                var originalUrl = await _client.GetAsync($"api/links/RedirectLink?shortenedUrl={$"https://localhost:7169/{shortenedUrl}"}");
+                var originalUrl = await _client.GetAsync(shortenedUrl);
 
                 if (!string.IsNullOrEmpty(originalUrl))
                 {
@@ -56,8 +56,8 @@ namespace LinkShorteningSystem.Controllers
 
             try
             {
-
-                var shortenedLink = await _client.CutLinkAsync(originalUrl);
+                var baseUrl = GetBaseUrl();
+                var shortenedLink = await _client.CutLinkAsync(baseUrl, originalUrl);
                 if (string.IsNullOrEmpty(shortenedLink))
                 {
                     ModelState.AddModelError("", "An error occurred while shortening the URL.");
@@ -74,6 +74,14 @@ namespace LinkShorteningSystem.Controllers
             }
 
             return View("Redirect");
+        }
+
+        private string GetBaseUrl()
+        {
+            var schema = HttpContext.Request.Scheme;
+            var host = HttpContext.Request.Host.Value;
+            var baseUrl = $"{schema}://{host}";
+            return baseUrl;
         }
     }
 }

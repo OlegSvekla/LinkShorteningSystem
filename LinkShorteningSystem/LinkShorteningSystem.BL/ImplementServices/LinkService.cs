@@ -19,9 +19,9 @@ namespace LinkShorteningSystem.BL.ImplementServices
             _linkRepository = linkRepository;
         }
 
-        public async Task<string> ShortenLinkAsync(string originalUrl)
+        public async Task<string> ShortenLinkAsync(string baseClientUrl, string originalUrl)
         {
-            string shortenedUrl = GenerateShortenedUrl();
+            var shortenedUrl = GenerateShortenedUrl(baseClientUrl);
 
             var link = new Link
             {
@@ -49,12 +49,10 @@ namespace LinkShorteningSystem.BL.ImplementServices
             return link?.OriginalUrl;
         }
 
-        private static string GenerateShortenedUrl()
+        private static string GenerateShortenedUrl(string baseClientUrl)
         {          
-            string host = "https://localhost:7169";
-            string randomChars = Guid.NewGuid().ToString("N").Substring(0, 7); 
-
-            string shortenedUrl = $"{host}/{randomChars}";
+            var randomChars = Guid.NewGuid().ToString("N").Substring(0, 7); 
+            var shortenedUrl = $"{baseClientUrl}/{randomChars}";
             return shortenedUrl;
         }
     }

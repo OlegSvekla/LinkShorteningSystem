@@ -8,7 +8,7 @@ namespace LinkShorteningSystem.Domain.Interfaces.Services
 {
     public interface ILinkService
     {
-        Task<string> ShortenLinkAsync(string originalUrl);
+        Task<string> ShortenLinkAsync(string baseClientUrl, string originalUrl);
         Task<string> GetShortenedLinkAsync(int linkId);
         Task<string> GetOriginalLinkAsync(string shortenedUrl);
     }

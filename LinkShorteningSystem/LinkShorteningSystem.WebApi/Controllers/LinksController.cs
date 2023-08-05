@@ -56,7 +56,7 @@ namespace LinkShorteningSystem.WebApi.Controllers
 
             try
             {
-                var shortenedUrl = await _linkService.ShortenLinkAsync(request.OriginalLink);
+                var shortenedUrl = await _linkService.ShortenLinkAsync(request.BaseUrl, request.OriginalLink);
                 return new JsonResult(shortenedUrl);
             }
             catch (Exception)
