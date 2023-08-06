@@ -1,3 +1,4 @@
+using LinkShorteningSystem;
 using LinkShorteningSystem.BL.ImplementServices;
 using LinkShorteningSystem.Domain.Interfaces.Repositories;
 using LinkShorteningSystem.Domain.Interfaces.Services;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 Dependencies.ConfigureServices(builder.Configuration, builder.Services);
+ConfigurationServices.AddCoreServices(builder.Services);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

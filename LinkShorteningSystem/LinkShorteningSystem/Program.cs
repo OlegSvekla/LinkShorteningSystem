@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+Configuration.AddCoreServices(builder.Services, builder.Configuration);
 
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>()
@@ -67,13 +68,13 @@ app.MapRazorPages();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Link}/{action=Index}/{id?}");
+
+    endpoints.MapControllerRoute(
         name: "redirect",
         pattern: "{shortenedUrl}",
         defaults: new { controller = "Link", action = "RedirectLink" });
-
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Link}/{action=Index}/{id?}");
 });
 
 

@@ -15,11 +15,15 @@ namespace LinkShorteningSystem.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly JwtTokenService _jwtTokenService;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager, JwtTokenService jwtTokenService)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
+            _jwtTokenService = jwtTokenService;
         }
 
         /// <summary>
@@ -103,12 +107,19 @@ namespace LinkShorteningSystem.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                // Попытка входа без учета блокировки учетной записи при сбоях паролей
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    // Генерация JWT токена
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    var jwtToken = _jwtTokenService.GenerateJwtToken(user);
+
+                    // Сохранение JWT токена в cookie или отправка на клиент для использования в последующих запросах
+                    Response.Cookies.Append("jwtToken", jwtToken);
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
