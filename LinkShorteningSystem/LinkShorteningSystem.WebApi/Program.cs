@@ -2,22 +2,14 @@ using LinkShorteningSystem;
 using LinkShorteningSystem.BL.ImplementServices;
 using LinkShorteningSystem.Domain.Interfaces.Repositories;
 using LinkShorteningSystem.Domain.Interfaces.Services;
-using LinkShorteningSystem.Infrastructure;
 using LinkShorteningSystem.Infrastructure.Data;
+using LinkShorteningSystem.Infrastructure.Dependencies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-Dependencies.ConfigureServices(builder.Configuration, builder.Services);
-ConfigurationServices.AddCoreServices(builder.Services);
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddHttpClient();
-builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-builder.Services.AddScoped<ILinkService, LinkService>();
-
+DependenciesApi.ConfigureServices(builder.Configuration, builder.Services);
+ConfigurationServicesApi.AddCoreServices(builder.Services);
 
 var app = builder.Build();
 
@@ -31,20 +23,14 @@ using (var scope = app.Services.CreateScope())
         {
             catalogContext.Database.Migrate();
         }
-
-        //var identityContext = scopedProvider.GetRequiredService<AppIdentityDbContext>();
-        //if (identityContext.Database.IsSqlServer())
-        //{
-        //identityContext.Database.Migrate();
-        //}
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "An error occured addition migrations to Database");
+        var logger = scopedProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while adding migrations to Database");
     }
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

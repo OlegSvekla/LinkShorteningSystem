@@ -1,12 +1,12 @@
-﻿using LinkShorteningSystem.Infrastructure.Identity;
-using LinkShorteningSystem.Models;
+﻿using LinkShorteningSystem.Areas.Identity.JwtConfig.Models;
+using LinkShorteningSystem.Infrastructure.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace LinkShorteningSystem
+namespace LinkShorteningSystem.Areas.Identity.JwtConfig.Services
 {
     public class JwtTokenService
     {
@@ -59,5 +59,4 @@ namespace LinkShorteningSystem
             }
         }
     }
-
 }

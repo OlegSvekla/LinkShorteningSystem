@@ -1,4 +1,4 @@
-﻿namespace LinkShorteningSystem.Models
+﻿namespace LinkShorteningSystem.Areas.Identity.JwtConfig.Models
 {
     public class JwtSettings
     {

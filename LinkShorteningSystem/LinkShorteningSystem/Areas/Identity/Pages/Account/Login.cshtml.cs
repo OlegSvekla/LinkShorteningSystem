@@ -3,6 +3,7 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
+using LinkShorteningSystem.Areas.Identity.JwtConfig.Services;
 using LinkShorteningSystem.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -82,49 +83,46 @@ namespace LinkShorteningSystem.Areas.Identity.Pages.Account
             public bool RememberMe { get; set; }
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task OnGetAsync(string returnLink = null)
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);
             }
 
-            returnUrl ??= Url.Content("~/");
+            returnLink ??= Url.Content("~/");
 
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            ReturnUrl = returnUrl;
+            ReturnUrl = returnLink;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string returnLink = null)
         {
-            returnUrl ??= Url.Content("~/");
+            returnLink ??= Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
             {
-                // Попытка входа без учета блокировки учетной записи при сбоях паролей
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
 
-                    // Генерация JWT токена
                     var user = await _userManager.FindByEmailAsync(Input.Email);
                     var jwtToken = _jwtTokenService.GenerateJwtToken(user);
 
-                    // Сохранение JWT токена в cookie или отправка на клиент для использования в последующих запросах
                     Response.Cookies.Append("jwtToken", jwtToken);
 
-                    return LocalRedirect(returnUrl);
+                    return LocalRedirect(returnLink);
                 }
                 if (result.RequiresTwoFactor)
                 {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnLink, RememberMe = Input.RememberMe });
                 }
                 if (result.IsLockedOut)
                 {
@@ -138,7 +136,6 @@ namespace LinkShorteningSystem.Areas.Identity.Pages.Account
                 }
             }
 
-            // If we got this far, something failed, redisplay form
             return Page();
         }
     }

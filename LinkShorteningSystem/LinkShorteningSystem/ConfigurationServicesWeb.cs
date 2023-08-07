@@ -1,12 +1,16 @@
-﻿using LinkShorteningSystem.Models;
+﻿using LinkShorteningSystem.Areas.Identity.JwtConfig.Models;
+using LinkShorteningSystem.Areas.Identity.JwtConfig.Services;
+using LinkShorteningSystem.HttpClients;
+using LinkShorteningSystem.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace LinkShorteningSystem
 {
-    public static class Configuration
+    public static class ConfigurationServicesWeb
     {
         internal static IServiceCollection AddCoreServices(this IServiceCollection services, IConfiguration configuration)
         {
@@ -30,8 +34,28 @@ namespace LinkShorteningSystem
                     };
                 });
 
-            services.Configure<JwtSettings>(jwtSettings); // Добавьте эту строку, чтобы вы могли получить настройки JWT в других местах приложения
+            var configSection = configuration.GetRequiredSection(HostConfig.CONFIG_NAME);
+            services.Configure<HostConfig>(configSection);
+            var baseLinkConfig = configSection.Get<HostConfig>();
+
+            services.AddHttpClient<ILinkShorteningSystemHttpClient, LinkShorteningSystemHttpClient>()
+                .ConfigureHttpClient(cfg =>
+                {
+                    cfg.BaseAddress = new Uri(baseLinkConfig.ApiBase);
+                    cfg.Timeout = TimeSpan.FromSeconds(30);
+                });
+
+            services
+                .AddIdentity<ApplicationUser, IdentityRole>()
+                .AddDefaultUI()
+                .AddEntityFrameworkStores<AppIdentityDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.Configure<JwtSettings>(jwtSettings);
             services.AddScoped<JwtTokenService>();
+            services.AddControllersWithViews();
+            services.AddRazorPages();
+
             return services;
         }
     }

@@ -13,40 +13,47 @@ public class LinkShorteningSystemHttpClient : ILinkShorteningSystemHttpClient
 
     private readonly AsyncRetryPolicy _retryPolicy;
     private readonly HttpClient _client;
+    private readonly ILogger<LinkShorteningSystemHttpClient> _logger;
 
-    public LinkShorteningSystemHttpClient(HttpClient client)
+    public LinkShorteningSystemHttpClient(HttpClient client, ILogger<LinkShorteningSystemHttpClient> logger)
     {
         _client = client;
         _client.Timeout = TimeSpan.FromMinutes(1);
+        _logger = logger;
+
         _retryPolicy = Policy
             .Handle<HttpRequestException>()
-            .WaitAndRetryAsync(RetryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+            .WaitAndRetryAsync(RetryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                (exception, timeSpan, retryCount, context) =>
+                {
+                    _logger.LogWarning(exception, "Request failed, retrying...");
+                });
     }
 
-    public async Task<string> GetAsync(string baseUrl, string shortenedUrl, CancellationToken cancellationToken = default)
+    public async Task<string> GetAsync(string baseLink, string shortenedLink, CancellationToken cancellationToken = default)
     {
         const string endpoint = "api/links/RedirectLink";
 
         return await _retryPolicy.ExecuteAsync(async () =>
         {
-            var requestUri = $"{endpoint}?shortenedUrl={$"{baseUrl}/{shortenedUrl}"}";
-            var response = await _client.GetAsync(requestUri, cancellationToken);
+            var requestLink = $"{endpoint}?shortenedLink={$"{baseLink}/{shortenedLink}"}";
+            var response = await _client.GetAsync(requestLink, cancellationToken);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync(cancellationToken);
         });
     }
 
-    public async Task<string> CutLinkAsync(string baseUrl, string origin, CancellationToken token = default)
+    public async Task<string> CutLinkAsync(string baseLink, string origin, CancellationToken token = default)
     {
         return await _retryPolicy.ExecuteAsync(async () =>
         {
-            var data = JsonConvert.SerializeObject(new { OriginalLink = origin, BaseUrl = baseUrl });
+            var data = JsonConvert.SerializeObject(new { OriginalLink = origin, BaseLink = baseLink });
             var body = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await _client.PostAsync("api/links/ShortenLink", body, token);
             response.EnsureSuccessStatusCode();
             var stringContent = await response.Content.ReadAsStringAsync(token);
-            var shortened = JsonConvert.DeserializeObject<string>(stringContent)!;
-            return shortened;
+            var shortenedLink = JsonConvert.DeserializeObject<string>(stringContent)!;
+            return shortenedLink;
         });
     }
 }

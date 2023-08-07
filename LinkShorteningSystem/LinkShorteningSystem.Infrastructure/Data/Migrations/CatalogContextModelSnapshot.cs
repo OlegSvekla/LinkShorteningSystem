@@ -33,11 +33,11 @@ namespace LinkShorteningSystem.Infrastructure.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("OriginalUrl")
+                    b.Property<string>("OriginalLink")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ShortenedUrl")
+                    b.Property<string>("ShortenedLink")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

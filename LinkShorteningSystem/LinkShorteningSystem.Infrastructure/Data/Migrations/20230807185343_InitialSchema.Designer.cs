@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinkShorteningSystem.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogContext))]
-    [Migration("20230802085309_InitialSchema")]
+    [Migration("20230807185343_InitialSchema")]
     partial class InitialSchema
     {
         /// <inheritdoc />
@@ -36,11 +36,11 @@ namespace LinkShorteningSystem.Infrastructure.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("OriginalUrl")
+                    b.Property<string>("OriginalLink")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ShortenedUrl")
+                    b.Property<string>("ShortenedLink")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
