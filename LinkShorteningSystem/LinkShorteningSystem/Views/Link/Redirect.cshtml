@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Link Shortener";
+}
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+
+@if (ViewBag.ShortenedLink != null)
+{
+    <div class="mt-4 text-center">
+        <a href="@ViewBag.ShortenedLink" target="_blank">
+            @ViewBag.ShortenedLink
+        </a>
+    </div>
+    <p class="text-center">Вот ваша короткая ссылка</p>
+}
