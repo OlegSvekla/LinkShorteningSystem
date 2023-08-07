@@ -17,8 +17,8 @@ namespace LinkShorteningSystem.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OriginalUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ShortenedUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OriginalLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ShortenedLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

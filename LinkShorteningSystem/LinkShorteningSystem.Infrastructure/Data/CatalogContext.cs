@@ -14,10 +14,6 @@ namespace LinkShorteningSystem.Infrastructure.Data
         {
 
         }
-
-
         public DbSet<Link> Links { get; set; }
-    }
-       
-    
+    }         
 }

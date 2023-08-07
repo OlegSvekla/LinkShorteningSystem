@@ -6,16 +6,16 @@
 
 <form method="post" asp-action="ShortenLink">
     <div class="form-group">
-        <label for="originalUrl">Enter the original URL:</label>
-        <input type="text" class="form-control" name="originalUrl" id="originalUrl" required />
+        <label for="originalLink">Enter the original URL:</label>
+        <input type="text" class="form-control" name="originalLink" id="originalLink" required />
     </div>
     <button type="submit" class="btn btn-primary">ShortenLink</button>
 </form>
 
-@if (ViewBag.ShortenedUrl != null)
+@if (ViewBag.ShortenedLink != null)
 {
     <div class="mt-4">
-        <h4>Shortened URL:</h4>
-        <a href="@ViewBag.ShortenedUrl" target="_blank">@ViewBag.ShortenedUrl</a>
+        <h4>Shortened Link:</h4>
+        <a href="@ViewBag.ShortenedLink" target="_blank">@ViewBag.ShortenedLink</a>
     </div>
 }

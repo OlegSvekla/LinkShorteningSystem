@@ -6,10 +6,12 @@ namespace LinkShorteningSystem.Controllers
     public class LinkController : Controller
     {
         private readonly ILinkShorteningSystemHttpClient _client;
+        private readonly ILogger<LinkController> _logger;
 
-        public LinkController(ILinkShorteningSystemHttpClient client)
+        public LinkController(ILinkShorteningSystemHttpClient client, ILogger<LinkController> logger)
         {
             _client = client;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -19,17 +21,17 @@ namespace LinkShorteningSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> RedirectLink(string shortenedUrl)
+        public async Task<IActionResult> RedirectLink(string shortenedLink)
         {
-            if (string.IsNullOrEmpty(shortenedUrl))
+            if (string.IsNullOrEmpty(shortenedLink))
             {
                 return BadRequest("Please provide a shortened URL.");
             }
 
             try
             {
-                var baseUrl = GetBaseUrl();
-                var originalUrl = await _client.GetAsync(baseUrl, shortenedUrl);
+                var baseUrl = GetBaseLink();
+                var originalUrl = await _client.GetAsync(baseUrl, shortenedLink);
 
                 if (!string.IsNullOrEmpty(originalUrl))
                 {
@@ -40,16 +42,17 @@ namespace LinkShorteningSystem.Controllers
                     return NotFound();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while redirecting.");
                 return StatusCode(500, "An error occurred while redirecting.");
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> ShortenLink(string originalUrl)
+        public async Task<IActionResult> ShortenLink(string originalLink)
         {
-            if (string.IsNullOrEmpty(originalUrl))
+            if (string.IsNullOrEmpty(originalLink))
             {
                 ModelState.AddModelError("", "Please enter an original URL.");
                 return View("Index");
@@ -57,19 +60,20 @@ namespace LinkShorteningSystem.Controllers
 
             try
             {
-                var baseUrl = GetBaseUrl();
-                var shortenedLink = await _client.CutLinkAsync(baseUrl, originalUrl);
+                var baseLink = GetBaseLink();
+                var shortenedLink = await _client.CutLinkAsync(baseLink, originalLink);
                 if (string.IsNullOrEmpty(shortenedLink))
                 {
                     ModelState.AddModelError("", "An error occurred while shortening the URL.");
                 }
                 else
                 {
-                    ViewBag.ShortenedUrl = shortenedLink;
+                    ViewBag.ShortenedLink = shortenedLink;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while shortening the URL.");
                 ModelState.AddModelError("", "An error occurred while shortening the URL.");
                 return View("Index");
             }
@@ -77,12 +81,12 @@ namespace LinkShorteningSystem.Controllers
             return View("Redirect");
         }
 
-        private string GetBaseUrl()
+        private string GetBaseLink()
         {
             var schema = HttpContext.Request.Scheme;
             var host = HttpContext.Request.Host.Value;
-            var baseUrl = $"{schema}://{host}";
-            return baseUrl;
+            var baseLink = $"{schema}://{host}";
+            return baseLink;
         }
     }
 }

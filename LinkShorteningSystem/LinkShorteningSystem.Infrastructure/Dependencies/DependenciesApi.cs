@@ -9,14 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LinkShorteningSystem.Infrastructure
+namespace LinkShorteningSystem.Infrastructure.Dependencies
 {
-    public static class Dependencies
+    public static class DependenciesApi
     {
         public static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             services.AddDbContext<CatalogContext>(context => context.UseSqlServer(configuration.GetConnectionString("LinkConnection")));
-            services.AddDbContext<AppIdentityDbContext>(context => context.UseSqlServer(configuration.GetConnectionString("IdentityConnection")));
         }
     }
 }

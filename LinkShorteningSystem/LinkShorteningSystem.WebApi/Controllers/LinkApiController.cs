@@ -7,36 +7,39 @@ namespace LinkShorteningSystem.WebApi.Controllers
 {
     [ApiController]
     [Route("api/links")]
-    public class LinksController : ControllerBase
+    public class LinkApiController : ControllerBase
     {
         private readonly ILinkService _linkService;
+        private readonly ILogger<LinkApiController> _logger;
 
-        public LinksController(ILinkService linkService)
+        public LinkApiController(ILinkService linkService, ILogger<LinkApiController> logger)
         {
             _linkService = linkService;
+            _logger = logger;
         }
 
         [AllowAnonymous]
         [HttpGet("RedirectLink")]
-        public async Task<IActionResult> RedirectLink(string shortenedUrl)
+        public async Task<IActionResult> RedirectLink(string shortenedLink)
         {
-            if (string.IsNullOrEmpty(shortenedUrl))
+            if (string.IsNullOrEmpty(shortenedLink))
             {
                 return BadRequest("Please provide a shortened URL.");
             }
 
             try
             {
-                var originalUrl = await _linkService.GetOriginalLinkAsync(shortenedUrl);
-                if (string.IsNullOrEmpty(originalUrl))
+                var originalLink = await _linkService.GetOriginalLinkAsync(shortenedLink);
+                if (string.IsNullOrEmpty(originalLink))
                 {
                     return NotFound();
                 }
 
-                return Ok(originalUrl);
+                return Ok(originalLink);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while redirecting.");
                 return StatusCode(500, "An error occurred while redirecting.");
             }
         }
@@ -52,11 +55,12 @@ namespace LinkShorteningSystem.WebApi.Controllers
 
             try
             {
-                var shortenedUrl = await _linkService.ShortenLinkAsync(request.BaseUrl, request.OriginalLink);
-                return new JsonResult(shortenedUrl);
+                var shortenedLink = await _linkService.ShortenLinkAsync(request.BaseLink, request.OriginalLink);
+                return new JsonResult(shortenedLink);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while shortening the URL.");
                 return StatusCode(500, "An error occurred while shortening the URL.");
             }
         }
