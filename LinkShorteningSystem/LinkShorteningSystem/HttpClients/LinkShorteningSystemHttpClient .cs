@@ -30,7 +30,7 @@ public class LinkShorteningSystemHttpClient : ILinkShorteningSystemHttpClient
                 });
     }
 
-    public async Task<string> GetAsync(string baseLink, string shortenedLink, CancellationToken cancellationToken = default)
+    public async Task<string> GetOriginalByShortendLinkAsync(string baseLink, string shortenedLink, CancellationToken cancellationToken = default)
     {
         const string endpoint = "api/links/RedirectLink";
 

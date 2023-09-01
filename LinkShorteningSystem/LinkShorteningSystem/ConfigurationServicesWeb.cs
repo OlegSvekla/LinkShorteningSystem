@@ -6,14 +6,26 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LinkShorteningSystem
 {
     public static class ConfigurationServicesWeb
     {
-        internal static IServiceCollection AddCoreServices(this IServiceCollection services, IConfiguration configuration)
+        internal static IServiceCollection ConfigureServices(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            ILoggingBuilder logging)
         {
+
+            logging.ClearProviders();
+            logging.AddSerilog(
+                new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger());
+
             var jwtSettings = configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings["SecretKey"];
             var issuer = jwtSettings["Issuer"];
