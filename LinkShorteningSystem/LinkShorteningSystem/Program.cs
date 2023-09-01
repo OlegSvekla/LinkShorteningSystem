@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 DependenciesWeb.ConfigureServices(builder.Configuration, builder.Services);
-ConfigurationServicesWeb.AddCoreServices(builder.Services, builder.Configuration);
+ConfigurationServicesWeb.ConfigureServices(builder.Services, builder.Configuration, builder.Logging);
 
 var app = builder.Build();
 
@@ -52,11 +52,11 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
         name: "redirect",
         pattern: "{shortenedLink}",
-        defaults: new { controller = "Link", action = "RedirectLink" });
+        defaults: new { controller = "Web", action = "RedirectLink" });
 
     endpoints.MapControllerRoute(
         name: "default",
-        pattern: "{controller=Link}/{action=Index}/{id?}");
+        pattern: "{controller=Web}/{action=Index}/{id?}");
 });
 
 app.Run();

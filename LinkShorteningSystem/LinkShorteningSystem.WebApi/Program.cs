@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 DependenciesApi.ConfigureServices(builder.Configuration, builder.Services);
-ConfigurationServicesApi.AddCoreServices(builder.Services);
+ConfigurationServicesApi.AddCoreServices(builder.Services, builder.Configuration, builder.Logging);
 
 var app = builder.Build();
 

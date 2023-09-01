@@ -1,14 +1,8 @@
 ﻿using LinkShorteningSystem.Domain.Entities;
+using LinkShorteningSystem.Domain.Exceptions;
 using LinkShorteningSystem.Domain.Interfaces.Repositories;
 using LinkShorteningSystem.Domain.Interfaces.Services;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LinkShorteningSystem.BL.ImplementServices
 {
@@ -28,6 +22,11 @@ namespace LinkShorteningSystem.BL.ImplementServices
             _logger.LogInformation("ShortenLinkAsync called. OriginalLink: {OriginalLink}", originalLink);
 
             var shortenedLink = GenerateShortenedLink(baseClientLink);
+            if(shortenedLink is null)
+            {
+                throw new ShortenedLinkNotFoundException($"No shortened link were found");
+            }
+
             _logger.LogInformation("Generated shortened link: {ShortenedLink}", shortenedLink);
 
             var link = new Link
@@ -48,22 +47,30 @@ namespace LinkShorteningSystem.BL.ImplementServices
         {
             _logger.LogInformation("GetShortenedLinkAsync called. LinkId: {LinkId}", linkId);
 
-            var link = await _linkRepository.GetByIdAsync(linkId);
+            var Originallink = await _linkRepository.GetByIdAsync(linkId);
+            if (Originallink is null)
+            {
+                throw new OriginalLinkNotFoundException($"No original link were found by its id like: {linkId}");
+            }
 
-            _logger.LogInformation("Retrieved shortened link: {ShortenedLink}", link?.ShortenedLink);
+            _logger.LogInformation("Retrieved shortened link: {ShortenedLink}", Originallink?.ShortenedLink);
 
-            return link?.ShortenedLink;
+            return Originallink?.ShortenedLink;
         }
 
         public async Task<string> GetOriginalLinkAsync(string shortenedLink)
         {
             _logger.LogInformation("GetOriginalLinkAsync called. ShortenedLink: {ShortenedLink}", shortenedLink);
 
-            var link = await _linkRepository.FirstOrDefaultAsync(l => l.ShortenedLink == shortenedLink);
+            var Shortlink = await _linkRepository.FirstOrDefaultAsync(l => l.ShortenedLink == shortenedLink);
+            if (Shortlink is null)
+            {
+                throw new ShortenedLinkNotFoundException($"{shortenedLink} not found");
+            }
 
-            _logger.LogInformation("Retrieved original link: {OriginalLink}", link?.OriginalLink);
+            _logger.LogInformation("Retrieved original link: {OriginalLink}", Shortlink?.OriginalLink);
 
-            return link?.OriginalLink;
+            return Shortlink?.OriginalLink;
         }
 
         private static string GenerateShortenedLink(string baseClientLink)
