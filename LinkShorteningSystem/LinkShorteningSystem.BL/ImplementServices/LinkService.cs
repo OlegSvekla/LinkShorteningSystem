@@ -79,10 +79,6 @@ namespace LinkShorteningSystem.BL.ImplementServices
 
         private static string GenerateShortenedLink(string baseClientLink)
         {
-            //var randomChars = Guid.NewGuid().ToString("N").Substring(0, 7);
-            //var shortenedLink = $"{baseClientLink}/{randomChars}";
-            //return shortenedLink;
-
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(baseClientLink));

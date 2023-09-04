@@ -5,26 +5,19 @@ using LinkShorteningSystem.Domain.Interfaces.Services;
 using LinkShorteningSystem.Infrastructure.Data;
 using Serilog;
 
-namespace LinkShorteningSystem
+namespace LinkShorteningSystem.WebApi.ServicesConfigurationApi
 {
     public static class ConfigurationServicesApi
     {
         internal static IServiceCollection AddCoreServices(
             this IServiceCollection services,
-            IConfiguration configuration,
-            ILoggingBuilder logging)
+            IConfiguration configuration)       
         {
-            logging.ClearProviders();
-            logging.AddSerilog(
-                new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger());
-
             services.AddControllers();
             services.AddRazorPages();
             services.AddHttpClient();
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped<ILinkService, LinkService>();
 
