@@ -1,5 +1,6 @@
 ﻿using LinkShorteningSystem.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,25 @@ namespace LinkShorteningSystem.Infrastructure.Data
             _dbSet = _context.Set<T>();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetOneByAsync(Func<IQueryable<T>,
+            IIncludableQueryable<T, object>>? include = null,
+            Expression<Func<T, bool>>? expression = null)
         {
-            return await _dbSet.FindAsync(id);
+            IQueryable<T> query = _dbSet;
+
+            if (expression is not null)
+            {
+                query = query.Where(expression);
+            }
+
+            if (include is not null)
+            {
+                query = include(query);
+            }
+
+            var model = await query.AsNoTracking().FirstOrDefaultAsync();
+
+            return model!;
         }
 
         public async Task<T> AddAsync(T entity)

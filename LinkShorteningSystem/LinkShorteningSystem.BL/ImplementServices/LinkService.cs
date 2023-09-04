@@ -3,6 +3,10 @@ using LinkShorteningSystem.Domain.Exceptions;
 using LinkShorteningSystem.Domain.Interfaces.Repositories;
 using LinkShorteningSystem.Domain.Interfaces.Services;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq.Expressions;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace LinkShorteningSystem.BL.ImplementServices
 {
@@ -47,7 +51,7 @@ namespace LinkShorteningSystem.BL.ImplementServices
         {
             _logger.LogInformation("GetShortenedLinkAsync called. LinkId: {LinkId}", linkId);
 
-            var Originallink = await _linkRepository.GetByIdAsync(linkId);
+            var Originallink = await _linkRepository.GetOneByAsync(expression: _=>_.Id.Equals(linkId));
             if (Originallink is null)
             {
                 throw new OriginalLinkNotFoundException($"No original link were found by its id like: {linkId}");
@@ -62,7 +66,7 @@ namespace LinkShorteningSystem.BL.ImplementServices
         {
             _logger.LogInformation("GetOriginalLinkAsync called. ShortenedLink: {ShortenedLink}", shortenedLink);
 
-            var Shortlink = await _linkRepository.FirstOrDefaultAsync(l => l.ShortenedLink == shortenedLink);
+            var Shortlink = await _linkRepository.GetOneByAsync(expression: _=> _.ShortenedLink.Equals(shortenedLink));
             if (Shortlink is null)
             {
                 throw new ShortenedLinkNotFoundException($"{shortenedLink} not found");
@@ -75,9 +79,19 @@ namespace LinkShorteningSystem.BL.ImplementServices
 
         private static string GenerateShortenedLink(string baseClientLink)
         {
-            var randomChars = Guid.NewGuid().ToString("N").Substring(0, 7);
-            var shortenedLink = $"{baseClientLink}/{randomChars}";
-            return shortenedLink;
+            //var randomChars = Guid.NewGuid().ToString("N").Substring(0, 7);
+            //var shortenedLink = $"{baseClientLink}/{randomChars}";
+            //return shortenedLink;
+
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(baseClientLink));
+                var base64Hash = Convert.ToBase64String(hashBytes);
+                var randomChars = base64Hash.Substring(0, 12);
+
+                var shortenedLink = $"{baseClientLink}/{randomChars}";
+                return shortenedLink;
+            }
         }
     }
 }
