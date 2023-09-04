@@ -1,0 +1,21 @@
+﻿﻿@{
+    ViewData["Title"] = "Link Shortener";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post" asp-action="ShortenLink">
+    <div class="form-group">
+        <label for="originalLink">Enter the original URL:</label>
+        <input type="text" class="form-control" name="originalLink" id="originalLink" required />
+    </div>
+    <button type="submit" class="btn btn-primary">ShortenLink</button>
+</form>
+
+@if (ViewBag.ShortenedLink != null)
+{
+    <div class="mt-4">
+        <h4>Shortened Link:</h4>
+        <a href="@ViewBag.ShortenedLink" target="_blank">@ViewBag.ShortenedLink</a>
+    </div>
+}
