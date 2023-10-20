@@ -55,8 +55,8 @@ namespace UnitTests.LinkShorteningSystem.Api.src.LinkShorteningSystem.BL
             // Arrange
             var linkId = 1;
             var existingLink = new Link { Id = linkId, ShortenedLink = "short-link" };
-            _linkRepositoryMock.Setup(r => r.GetByIdAsync(linkId))
-                .ReturnsAsync(existingLink);
+            //_linkRepositoryMock.Setup(r => r.GetByIdAsync(linkId))
+                //.ReturnsAsync(existingLink);
 
             // Act
             var result = await _linkService.GetShortenedLinkAsync(linkId);
