@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 LogsConfiguration.Configuration(builder.Configuration, builder.Logging);
 DependenciesWeb.ConfigureServices(builder.Configuration, builder.Services);
-JwtTokenExtension.Configuration(builder.Services, builder.Configuration);
+//JwtTokenExtension.Configuration(builder.Services, builder.Configuration);
 ConfigurationServicesWeb.ConfigureServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
