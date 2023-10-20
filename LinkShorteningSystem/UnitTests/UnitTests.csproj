@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LinkShorteningSystem.BL\LinkShorteningSystem.BL.csproj" />
-    <ProjectReference Include="..\LinkShorteningSystem\LinkShorteningSystem.csproj" />
+    <ProjectReference Include="..\LinkShorteningSystem\LinkShorteningSystem.Web.csproj" />
   </ItemGroup>
 
 </Project>
