@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkShorteningSystem.Web", "LinkShorteningSystem\LinkShorteningSystem.Web.csproj", "{7B156ECB-6051-4D0C-B461-5CED1485F2CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkShorteningSystem.Web", "src\LinkShorteningSystem\LinkShorteningSystem.Web\LinkShorteningSystem.Web.csproj", "{7B156ECB-6051-4D0C-B461-5CED1485F2CE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkShorteningSystem.Infrastructure", "LinkShorteningSystem.Infrastructure\LinkShorteningSystem.Infrastructure.csproj", "{DF270722-3F6C-40EF-AD6D-6DEC042CC6EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkShorteningSystem.Infrastructure", "src\LinkShorteningSystem\LinkShorteningSystem.Infrastructure\LinkShorteningSystem.Infrastructure.csproj", "{DF270722-3F6C-40EF-AD6D-6DEC042CC6EA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkShorteningSystem.BL", "LinkShorteningSystem.BL\LinkShorteningSystem.BL.csproj", "{35FDAF05-8CFF-4A5C-9DAF-4D9E4135835A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkShorteningSystem.BL", "src\LinkShorteningSystem\LinkShorteningSystem.BL\LinkShorteningSystem.BL.csproj", "{35FDAF05-8CFF-4A5C-9DAF-4D9E4135835A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkShorteningSystem.Domain", "LinkShorteningSystem.Domain\LinkShorteningSystem.Domain.csproj", "{38084E28-D843-4320-9267-ABFB94F6CEE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkShorteningSystem.Domain", "src\LinkShorteningSystem\LinkShorteningSystem.Domain\LinkShorteningSystem.Domain.csproj", "{38084E28-D843-4320-9267-ABFB94F6CEE6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkShorteningSystem.Api", "LinkShorteningSystem.WebApi\LinkShorteningSystem.Api.csproj", "{08C729EB-90E1-4740-9F90-0FCCBD1E3DDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkShorteningSystem.Api", "src\LinkShorteningSystem\LinkShorteningSystem.Api\LinkShorteningSystem.Api.csproj", "{08C729EB-90E1-4740-9F90-0FCCBD1E3DDD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{C3AD8798-BDA6-4FDA-9361-97CBF08B9250}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "src\LinkShorteningSystem.Tests\UnitTests.csproj", "{C3AD8798-BDA6-4FDA-9361-97CBF08B9250}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{168609CF-46CB-438A-950B-951A151CE9B6}"
 EndProject
