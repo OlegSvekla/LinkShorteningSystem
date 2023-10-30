@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using LinkShorteningSystem.Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,10 +9,12 @@ using System.Threading.Tasks;
 
 namespace LinkShorteningSystem.Infrastructure.Identity
 {
-    public sealed class AppIdentityDbContext : IdentityDbContext<ApplicationUser>
+    public sealed class AppIdentityDbContext : IdentityDbContext
     {
         public AppIdentityDbContext(DbContextOptions<AppIdentityDbContext> options) : base(options)
         {
         }
+
+        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
     }
 }

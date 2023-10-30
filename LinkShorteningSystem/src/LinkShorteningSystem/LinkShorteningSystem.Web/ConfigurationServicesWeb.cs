@@ -1,14 +1,10 @@
-﻿using LinkShorteningSystem.Areas.Identity.JwtConfig.Models;
-using LinkShorteningSystem.Areas.Identity.JwtConfig.Services;
-using LinkShorteningSystem.HttpClients;
+﻿using LinkShorteningSystem.HttpClients;
 using LinkShorteningSystem.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace LinkShorteningSystem
 {
@@ -58,13 +54,14 @@ namespace LinkShorteningSystem
                 });
 
             services
-                .AddIdentity<ApplicationUser, IdentityRole>()
+                .AddIdentity<IdentityUser, IdentityRole>()
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<AppIdentityDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.Configure<JwtSettings>(jwtSettings);
-            services.AddScoped<JwtTokenService>();
+            //services.Configure<JwtSettings>(jwtSettings);
+            //services.AddScoped<JwtTokenService>();
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
