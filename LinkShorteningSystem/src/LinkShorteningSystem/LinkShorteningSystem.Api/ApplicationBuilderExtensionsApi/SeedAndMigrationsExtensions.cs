@@ -13,7 +13,7 @@ namespace LinkShorteningSystem.WebApi.ApplicationBuilderExtensionApi
 
                 try
                 {
-                    var catalogContext = scopedProvider.GetRequiredService<CatalogContext>();
+                    var catalogContext = scopedProvider.GetRequiredService<CatalogDbContext>();
                     if (catalogContext.Database.IsSqlServer())
                     {
                         catalogContext.Database.Migrate();

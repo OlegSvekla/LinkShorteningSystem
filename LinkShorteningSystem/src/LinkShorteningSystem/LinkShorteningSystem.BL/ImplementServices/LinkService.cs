@@ -12,10 +12,10 @@ namespace LinkShorteningSystem.BL.ImplementServices
 {
     public sealed class LinkService : ILinkService
     {
-        private readonly IRepository<Link> _linkRepository;
+        private readonly ILinkRepository _linkRepository;
         private readonly ILogger<LinkService> _logger;
 
-        public LinkService(IRepository<Link> linkRepository, ILogger<LinkService> logger)
+        public LinkService(ILinkRepository linkRepository, ILogger<LinkService> logger)
         {
             _linkRepository = linkRepository;
             _logger = logger;
@@ -40,7 +40,7 @@ namespace LinkShorteningSystem.BL.ImplementServices
                 CreatedDate = DateTime.Now
             };
 
-            await _linkRepository.AddAsync(link);
+            await _linkRepository.CreateAsync(link);
 
             _logger.LogInformation("Link shortened: {ShortenedLink}", shortenedLink);
 

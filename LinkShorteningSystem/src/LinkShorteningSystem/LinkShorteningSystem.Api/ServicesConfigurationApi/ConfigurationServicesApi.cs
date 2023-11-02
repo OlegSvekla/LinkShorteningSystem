@@ -3,6 +3,7 @@ using LinkShorteningSystem.Domain.Entities;
 using LinkShorteningSystem.Domain.Interfaces.Repositories;
 using LinkShorteningSystem.Domain.Interfaces.Services;
 using LinkShorteningSystem.Infrastructure.Data;
+using LinkShorteningSystem.Infrastructure.Data.Repositories;
 using Serilog;
 
 namespace LinkShorteningSystem.WebApi.ServicesConfigurationApi
@@ -18,7 +19,8 @@ namespace LinkShorteningSystem.WebApi.ServicesConfigurationApi
             services.AddHttpClient();
             services.AddEndpointsApiExplorer();
 
-            services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<ILinkRepository, LinkRepository>();
             services.AddScoped<ILinkService, LinkService>();
 
             return services;

@@ -1,4 +1,4 @@
-namespace LinkShorteningSystem.Models
+namespace LinkShorteningSystem.Web.Models
 {
     public class ErrorViewModel
     {

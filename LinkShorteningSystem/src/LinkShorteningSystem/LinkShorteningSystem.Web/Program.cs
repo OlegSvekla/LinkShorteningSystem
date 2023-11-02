@@ -2,7 +2,6 @@ using LinkShorteningSystem;
 using LinkShorteningSystem.HttpClients;
 using LinkShorteningSystem.Infrastructure;
 using LinkShorteningSystem.Infrastructure.Data;
-using LinkShorteningSystem.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +17,7 @@ using (var scope = app.Services.CreateScope())
     var scopedProvider = scope.ServiceProvider;
     try
     {
-        var identityContext = scopedProvider.GetRequiredService<AppIdentityDbContext>();
+        var identityContext = scopedProvider.GetRequiredService<IdentityDbContext>();
         if (identityContext.Database.IsSqlServer())
         {
             identityContext.Database.Migrate();

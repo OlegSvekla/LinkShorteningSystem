@@ -10,14 +10,14 @@ namespace UnitTests.LinkShorteningSystem.Api.src.LinkShorteningSystem.BL
     [TestClass]
     public class LinkServiceTests
     {
-        private Mock<IRepository<Link>> _linkRepositoryMock;
+        private Mock<ILinkRepository> _linkRepositoryMock;
         private Mock<ILogger<LinkService>> _loggerMock;
         private LinkService _linkService;
 
         [TestInitialize]
         public void Setup()
         {
-            _linkRepositoryMock = new Mock<IRepository<Link>>();
+            _linkRepositoryMock = new Mock<ILinkRepository>();
             _loggerMock = new Mock<ILogger<LinkService>>();
             _linkService = new LinkService(_linkRepositoryMock.Object, _loggerMock.Object);
         }
@@ -30,7 +30,7 @@ namespace UnitTests.LinkShorteningSystem.Api.src.LinkShorteningSystem.BL
             var originalLink = "http://original-link.com";
             var generatedShortenedLink = $"{baseClientLink}/abcdefg";
 
-            _linkRepositoryMock.Setup(r => r.AddAsync(It.IsAny<Link>()))
+            _linkRepositoryMock.Setup(r => r.CreateAsync(It.IsAny<Link>()))
                 .Callback<Link>(link =>
                 {
                     link.ShortenedLink = generatedShortenedLink;
@@ -41,7 +41,7 @@ namespace UnitTests.LinkShorteningSystem.Api.src.LinkShorteningSystem.BL
 
             // Assert
             Assert.AreEqual(generatedShortenedLink, result);
-            _linkRepositoryMock.Verify(r => r.AddAsync(It.IsAny<Link>()), Times.Once);
+            _linkRepositoryMock.Verify(r => r.CreateAsync(It.IsAny<Link>()), Times.Once);
         }
 
         [TestMethod]
@@ -66,7 +66,7 @@ namespace UnitTests.LinkShorteningSystem.Api.src.LinkShorteningSystem.BL
             // Arrange
             var shortenedLink = "short-link";
             var existingLink = new Link { ShortenedLink = shortenedLink, OriginalLink = "original-link" };
-            _linkRepositoryMock.Setup(r => r.FirstOrDefaultAsync(It.IsAny<Expression<Func<Link, bool>>>()))
+            _linkRepositoryMock.Setup(r => r.GetOneByAsync(It.IsAny<Expression<Func<Link, bool>>>()))
                 .ReturnsAsync(existingLink);
 
             // Act

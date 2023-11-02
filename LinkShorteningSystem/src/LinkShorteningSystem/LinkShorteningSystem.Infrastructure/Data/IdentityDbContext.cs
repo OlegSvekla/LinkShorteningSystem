@@ -1,4 +1,5 @@
 ﻿using LinkShorteningSystem.Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,12 +9,11 @@ using System.Threading.Tasks;
 
 namespace LinkShorteningSystem.Infrastructure.Data
 {
-    public sealed class CatalogContext : DbContext
+    public sealed class IdentityDbContext : Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityDbContext
     {
-        public CatalogContext(DbContextOptions<CatalogContext> options) : base(options)
+        public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options)
         {
-
         }
-        public DbSet<Link> Links { get; set; }
-    }         
+
+    }
 }
