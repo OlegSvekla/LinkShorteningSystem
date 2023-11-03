@@ -21,6 +21,7 @@ namespace LinkShorteningSystem
             ILoggingBuilder logging)
         {
             services.AddTransient<IAccountService, AccountService>();
+
             logging.ClearProviders();
             logging.AddSerilog(
                 new LoggerConfiguration()
@@ -42,6 +43,7 @@ namespace LinkShorteningSystem
                 .AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityDbContext>();
 
+
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
 
@@ -57,11 +59,21 @@ namespace LinkShorteningSystem
             var audience = configuration["Tokens:Audience"];
             var accessTokenExpirationMinutes = Convert.ToInt32(tokens["AccessTokenExpirationMinutes"]);
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie(options => //CookieAuthenticationOptions
-        {
-            options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-        });
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login"; // Укажите путь к вашей странице логина
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/Account/Register"; // Укажите путь к вашей странице регистрации
+            });
+
+        //    services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        //.AddCookie(options => //CookieAuthenticationOptions
+        //{
+        //    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+        //});
 
             services.AddAuthentication(options =>
             {

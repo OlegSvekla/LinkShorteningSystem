@@ -9,7 +9,7 @@ namespace LinkShorteningSystem.Infrastructure.Dependencies
     {
         public static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
-            services.AddDbContext<CatalogDbContext>(context => context.UseSqlServer(configuration.GetConnectionString("LinkConnection")));
+            services.AddDbContext<CatalogDbContext>(context => context.UseSqlServer(configuration.GetConnectionString("CatalogConnection")));
         }
     }
 }

@@ -15,6 +15,6 @@ namespace LinkShorteningSystem.Infrastructure.Data
 
         }
         public DbSet<Link> Links { get; set; }
-        public DbSet<UserRefreshToken>? UserRefreshTokens { get; set; }
+        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
     }         
 }

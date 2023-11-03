@@ -65,16 +65,11 @@ namespace LinkShorteningSystem.BL.ImplementServices
                 {
                     new Claim(ClaimTypes.Name, user.Email),
                     new Claim(ClaimTypes.Role, "User"),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
                 };
 
                 var accessToken = _tokenService.GenerateAccessToken(claims);
-                var cookieOptions = new CookieOptions
-                {
-                    HttpOnly = true,
-                    Expires = DateTime.UtcNow.AddMinutes(15)
-                };
-                _httpContextAccessor.HttpContext.Response.Cookies.Append("access_token", accessToken, cookieOptions);
+
+                SetAccessTokenCookie(accessToken);
 
                 var signInResult = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
                 if (signInResult.Succeeded)
@@ -87,59 +82,62 @@ namespace LinkShorteningSystem.BL.ImplementServices
 
         public async Task<bool> Login(LoginViewModel model)
         {
-            //if (ModelState.IsValid)            
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user is not null)
+            if (user is null)
             {
-                var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-                if (result.Succeeded)
+                return false;
+            }
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+            if (!result.Succeeded)
+            {
+                return false;
+            }
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.Email)
+            };
+
+            var token = _tokenService.GenerateAccessToken(claims);
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+            var userRefreshToken = await _userRefreshTokenRepository
+                .GetOneByAsync(expression: _ => _.Username.Equals(user.Email));
+            if (userRefreshToken is null)
+            {
+                userRefreshToken = new UserRefreshToken
                 {
-                    var claims = new[]
-                    {
-                        new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                        new Claim(ClaimTypes.Name, user.Email)
-                    };
+                    Username = user.Email,
+                    RefreshToken = newRefreshToken,
+                    Password = model.Password
+                };
 
-                    var token = _tokenService.GenerateAccessToken(claims);
-                    var newRefreshToken = _tokenService.GenerateRefreshToken();
+                await _userRefreshTokenRepository.CreateAsync(userRefreshToken);
+            }
+            else
+            {
+                userRefreshToken.RefreshToken = newRefreshToken;
+                await _userRefreshTokenRepository.UpdateAsync(userRefreshToken);
+            }
 
-                    var userRefreshToken = await _userRefreshTokenRepository.GetOneByAsync(expression: _ => _.Username.Equals(user.Email));
-                    if (userRefreshToken is not null)
-                    {
-                        userRefreshToken.RefreshToken = newRefreshToken;
-                        await _userRefreshTokenRepository.UpdateAsync(userRefreshToken);
+            SetAccessTokenCookie(userRefreshToken.RefreshToken);
 
-                        var cookieOptions = new CookieOptions
-                        {
-                            HttpOnly = true,
-                            Expires = DateTime.UtcNow.AddMinutes(15)
-                        };
-                        _httpContextAccessor.HttpContext.Response.Cookies.Append("access_token", userRefreshToken.RefreshToken, cookieOptions);
-                    }
-                    else
-                    {
-                        userRefreshToken = new UserRefreshToken
-                        {
-                            Username = user.Email,
-                            RefreshToken = newRefreshToken,
-                            Password = model.Password
-                        };
+            return true;
+        }
 
-                        await _userRefreshTokenRepository.CreateAsync(userRefreshToken);
+        private void SetAccessTokenCookie(string refreshToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddMinutes(15)
+            };
 
-                        var cookieOptions = new CookieOptions
-                        {
-                            HttpOnly = true,
-                            Expires = DateTime.UtcNow.AddMinutes(15)
-                        };
-                        _httpContextAccessor.HttpContext.Response.Cookies.Append("access_token", userRefreshToken.RefreshToken, cookieOptions);
-                    }               
-                }
-                return true;
-            }           
-            return false;
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("access_token", refreshToken, cookieOptions);
         }
     }
 }
