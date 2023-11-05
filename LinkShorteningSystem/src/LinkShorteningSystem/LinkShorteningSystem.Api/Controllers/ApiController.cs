@@ -1,7 +1,9 @@
-﻿using LinkShorteningSystem.Domain.Interfaces.Services;
+﻿using FluentNHibernate.Conventions.Instances;
+using LinkShorteningSystem.Domain.Interfaces.Services;
 using LinkShorteningSystem.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace LinkShorteningSystem.WebApi.Controllers
 {
@@ -10,12 +12,10 @@ namespace LinkShorteningSystem.WebApi.Controllers
     public class ApiController : ControllerBase
     {
         private readonly ILinkService _linkService;
-        private readonly ILogger<ApiController> _logger;
 
-        public ApiController(ILinkService linkService, ILogger<ApiController> logger)
+        public ApiController(ILinkService linkService)
         {
             _linkService = linkService;
-            _logger = logger;
         }
 
         [AllowAnonymous]
@@ -24,7 +24,8 @@ namespace LinkShorteningSystem.WebApi.Controllers
         {
             var originalLink = await _linkService.GetOriginalLinkAsync(shortenedLink);
 
-            return Ok(originalLink);
+            return originalLink == 
+                null ? NotFound("No original link were found by shortend link") : Ok(originalLink);
         }
 
         [AllowAnonymous]
@@ -33,7 +34,9 @@ namespace LinkShorteningSystem.WebApi.Controllers
         {
             var shortenedLink = await _linkService.ShortenLinkAsync(request.BaseLink, request.OriginalLink);
 
-            return new JsonResult(shortenedLink);           
+            return shortenedLink == 
+                null ? NotFound("Unable to find generatedShortenLink ") : new JsonResult(shortenedLink);
+      
         }
     }
 }
