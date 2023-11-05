@@ -58,7 +58,7 @@ namespace LinkShorteningSystem.BL.ImplementServices
             var shortlink = await _linkRepository.GetOneByAsync(expression: _ => _.ShortenedLink.Equals(shortenedLink));
             if (shortlink is null)
             {
-                throw null;
+                return null;
             }
 
             return shortlink?.OriginalLink;
