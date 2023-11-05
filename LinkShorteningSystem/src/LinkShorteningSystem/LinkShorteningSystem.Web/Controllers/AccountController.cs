@@ -55,7 +55,8 @@ namespace LinkShorteningSystem.Web.Controllers
         {
             var success = await _accountService.Register(model);
 
-            return success == false ? NotFound("This user is already exist") : RedirectToAction("Index", "Web");
+            return success == 
+				false ? BadRequest("This user is already exist") : RedirectToAction("Index", "Web");
         }
 
         [HttpGet]
@@ -69,7 +70,8 @@ namespace LinkShorteningSystem.Web.Controllers
 		{
             var success = await _accountService.Login(model);
 
-            return success == false ? BadRequest("This user is not found exist") : RedirectToAction("Index", "Web");
+            return success == 
+				false ? NotFound("This user is not exist") : RedirectToAction("Index", "Web");
         }
 	}
 }
