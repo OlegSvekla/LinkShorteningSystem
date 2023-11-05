@@ -7,14 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LinkShorteningSystem.Infrastructure.Identity
+namespace LinkShorteningSystem.Infrastructure.Data
 {
-    public sealed class AppIdentityDbContext : IdentityDbContext
+    public sealed class IdentityDbContext : Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityDbContext
     {
-        public AppIdentityDbContext(DbContextOptions<AppIdentityDbContext> options) : base(options)
+        public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options)
         {
         }
 
-        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
     }
 }

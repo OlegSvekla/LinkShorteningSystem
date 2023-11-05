@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace LibraryAPI.ServicesConfiguration
 {
-    public static class SwaggerConfiguration
+    public static class SwaggerConfigurationApi
     {
         public static void Configuration(
             IServiceCollection services)

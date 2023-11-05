@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace LinkShorteningSystem.Infrastructure.Data
 {
-    public sealed class CatalogContext : DbContext
+    public sealed class CatalogDbContext : DbContext
     {
-        public CatalogContext(DbContextOptions<CatalogContext> options) : base(options)
+        public CatalogDbContext(DbContextOptions<CatalogDbContext> options) : base(options)
         {
 
         }
         public DbSet<Link> Links { get; set; }
+        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
     }         
 }
