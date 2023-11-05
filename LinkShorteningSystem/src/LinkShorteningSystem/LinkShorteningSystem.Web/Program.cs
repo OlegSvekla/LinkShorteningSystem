@@ -1,34 +1,17 @@
 using LinkShorteningSystem;
-using LinkShorteningSystem.HttpClients;
-using LinkShorteningSystem.Infrastructure;
-using LinkShorteningSystem.Infrastructure.Data;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using LinkShorteningSystem.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-DependenciesWeb.ConfigureServices(builder.Configuration, builder.Services);
-ConfigurationServicesWeb.ConfigureServices(builder.Services, builder.Configuration, builder.Logging);
+LogsConfigurationWeb.Configuration(builder.Configuration, builder.Logging);
+DbConfigurationWeb.Configuration(builder.Configuration, builder.Services);
+ServicesConfigurationWeb.Configuration(builder.Services);
+AuthConfigurationWeb.Configuration(builder.Services, builder.Configuration);
+HttpClientConfigurationWeb.Configuration(builder.Configuration, builder.Services);
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var scopedProvider = scope.ServiceProvider;
-    try
-    {
-        var identityContext = scopedProvider.GetRequiredService<IdentityDbContext>();
-        if (identityContext.Database.IsSqlServer())
-        {
-            identityContext.Database.Migrate();
-        }
-    }
-    catch (Exception ex)
-    {
-        var logger = scopedProvider.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while adding migrations to the Database");
-    }
-}
+await app.RunDbContextMigrationsWeb();
 
 if (!app.Environment.IsDevelopment())
 {

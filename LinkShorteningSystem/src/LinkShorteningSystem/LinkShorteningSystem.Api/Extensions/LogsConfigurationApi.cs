@@ -2,7 +2,7 @@
 
 namespace LinkShorteningSystem.WebApi.ServicesConfigurationApi
 {
-    public static class LogsConfiguration
+    public static class LogsConfigurationApi
     {
         public static void Configuration(
             IConfiguration configuration,

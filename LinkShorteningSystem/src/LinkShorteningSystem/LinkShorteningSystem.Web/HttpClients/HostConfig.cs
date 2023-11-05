@@ -1,4 +1,4 @@
-﻿namespace LinkShorteningSystem
+﻿namespace LinkShorteningSystem.Web.HttpClients
 {
     public sealed class HostConfig
     {
