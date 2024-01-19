@@ -1,13 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using LinkShorteningSystem.Domain.Entities;
+﻿using LinkShorteningSystem.Domain.Entities;
 using LinkShorteningSystem.Domain.Interfaces.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace LinkShorteningSystem.Infrastructure.Data.Repositories
 {

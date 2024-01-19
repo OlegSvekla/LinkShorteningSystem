@@ -1,12 +1,8 @@
-﻿using System.Security.Claims;
+﻿using LinkShorteningSystem.Domain.Interfaces.Services;
+using LinkShorteningSystem.Infrastructure.Data;
+using LinkShorteningSystem.Web.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using LinkShorteningSystem.Web.Models;
-using LinkShorteningSystem.Domain.Entities;
-using LinkShorteningSystem.Domain.Interfaces.Services;
-using LinkShorteningSystem.Infrastructure.Data;
-using FluentNHibernate.Mapping;
 
 namespace LinkShorteningSystem.Web.Controllers
 {

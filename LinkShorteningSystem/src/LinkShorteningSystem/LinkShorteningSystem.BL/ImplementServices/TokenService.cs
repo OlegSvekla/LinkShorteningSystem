@@ -1,14 +1,10 @@
 ﻿using LinkShorteningSystem.Domain.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace LinkShorteningSystem.BL.ImplementServices
 {
@@ -29,13 +25,13 @@ namespace LinkShorteningSystem.BL.ImplementServices
             var jwt = new JwtSecurityToken(
                 issuer: _configuration["Tokens:Issuer"],
                 audience: _configuration["Tokens:Issuer"],
-                claims: claims, //the user's claims, for example new Claim[] { new Claim(ClaimTypes.Name, "The username"), //... 
+                claims: claims,
                 notBefore: DateTime.UtcNow,
                 expires: DateTime.UtcNow.AddSeconds(20),
                 signingCredentials: credentials
             );
 
-            return new JwtSecurityTokenHandler().WriteToken(jwt); //the method is called WriteToken but returns a string
+            return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
 
         public string GenerateRefreshToken()
@@ -52,11 +48,11 @@ namespace LinkShorteningSystem.BL.ImplementServices
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false, //you might want to validate the audience and issuer depending on your use case
+                ValidateAudience = false,
                 ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"])),
-                ValidateLifetime = false //here we are saying that we don't care about the token's expiration date
+                ValidateLifetime = false 
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -68,7 +64,5 @@ namespace LinkShorteningSystem.BL.ImplementServices
 
             return principal;
         }
-
-
     }
 }

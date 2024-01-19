@@ -1,10 +1,7 @@
 ﻿using LinkShorteningSystem.Domain.Entities;
-using LinkShorteningSystem.Domain.Exceptions;
 using LinkShorteningSystem.Domain.Interfaces.Repositories;
 using LinkShorteningSystem.Domain.Interfaces.Services;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 

@@ -1,4 +1,3 @@
-using LinkShorteningSystem;
 using LinkShorteningSystem.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

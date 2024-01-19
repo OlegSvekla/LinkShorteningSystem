@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LinkShorteningSystem.HttpClients;
+﻿using LinkShorteningSystem.HttpClients;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LinkShorteningSystem.Controllers
 {

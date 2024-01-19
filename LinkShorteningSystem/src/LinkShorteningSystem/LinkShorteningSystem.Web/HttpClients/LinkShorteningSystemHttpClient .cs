@@ -1,9 +1,7 @@
-﻿using System.Net;
-using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
+using System.Text;
 
 namespace LinkShorteningSystem.HttpClients;
 

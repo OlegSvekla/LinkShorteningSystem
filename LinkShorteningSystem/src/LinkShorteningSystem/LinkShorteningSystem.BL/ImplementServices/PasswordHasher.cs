@@ -1,18 +1,11 @@
 ﻿using LinkShorteningSystem.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LinkShorteningSystem.BL.ImplementServices
 {
     public class PasswordHasher : IPasswordHasher
     {
-        //More information about PasswordHasher here: https://www.blinkingcaret.com/2017/11/29/asp-net-identity-passwordhash/
-
         public string GenerateIdentityV3Hash(string password, KeyDerivationPrf prf = KeyDerivationPrf.HMACSHA256, int iterationCount = 10000, int saltSize = 16)
         {
             using (var rng = RandomNumberGenerator.Create())
@@ -74,8 +67,7 @@ namespace LinkShorteningSystem.BL.ImplementServices
             {
                 areEqual &= (array1[i] == array2[i]);
             }
-            //If you stop as soon as the arrays don't match you'll be disclosing information about how different they are by the time it takes to compare them
-            //this way no information is disclosed
+
             return areEqual;
         }
 

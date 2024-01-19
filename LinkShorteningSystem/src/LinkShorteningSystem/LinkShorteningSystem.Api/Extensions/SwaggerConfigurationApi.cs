@@ -1,7 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
-using System.Reflection;
-
-namespace LibraryAPI.ServicesConfiguration
+﻿namespace LibraryAPI.ServicesConfiguration
 {
     public static class SwaggerConfigurationApi
     {

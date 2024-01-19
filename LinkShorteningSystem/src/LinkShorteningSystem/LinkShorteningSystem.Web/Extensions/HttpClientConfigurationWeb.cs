@@ -1,7 +1,5 @@
 ﻿using LinkShorteningSystem.HttpClients;
-using LinkShorteningSystem.Infrastructure.Data;
 using LinkShorteningSystem.Web.HttpClients;
-using Microsoft.EntityFrameworkCore;
 
 namespace LinkShorteningSystem.Web.Extensions
 {
@@ -21,7 +19,6 @@ namespace LinkShorteningSystem.Web.Extensions
                     cfg.BaseAddress = new Uri(baseLinkConfig.ApiBase);
                     cfg.Timeout = TimeSpan.FromSeconds(30);
                 });
-
         }
     }
 }

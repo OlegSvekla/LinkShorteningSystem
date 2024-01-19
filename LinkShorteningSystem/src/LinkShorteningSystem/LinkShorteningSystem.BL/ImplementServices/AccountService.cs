@@ -1,16 +1,14 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
-using LinkShorteningSystem.Web.Models;
+﻿using LinkShorteningSystem.Domain.Entities;
+using LinkShorteningSystem.Domain.Interfaces.Repositories;
 using LinkShorteningSystem.Domain.Interfaces.Services;
 using LinkShorteningSystem.Infrastructure.Data;
+using LinkShorteningSystem.Web.Models;
 using Microsoft.AspNetCore.Http;
-using Serilog;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Azure;
-using LinkShorteningSystem.Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
-using LinkShorteningSystem.Domain.Interfaces.Repositories;
+using System.Security.Claims;
 
 namespace LinkShorteningSystem.BL.ImplementServices
 {

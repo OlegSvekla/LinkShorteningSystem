@@ -1,10 +1,7 @@
 ﻿using LinkShorteningSystem.BL.ImplementServices;
-using LinkShorteningSystem.Domain.Entities;
 using LinkShorteningSystem.Domain.Interfaces.Repositories;
 using LinkShorteningSystem.Domain.Interfaces.Services;
-using LinkShorteningSystem.Infrastructure.Data;
 using LinkShorteningSystem.Infrastructure.Data.Repositories;
-using Serilog;
 
 namespace LinkShorteningSystem.WebApi.ServicesConfigurationApi
 {

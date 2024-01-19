@@ -1,9 +1,7 @@
-﻿using FluentNHibernate.Conventions.Instances;
-using LinkShorteningSystem.Domain.Interfaces.Services;
+﻿using LinkShorteningSystem.Domain.Interfaces.Services;
 using LinkShorteningSystem.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace LinkShorteningSystem.WebApi.Controllers
 {

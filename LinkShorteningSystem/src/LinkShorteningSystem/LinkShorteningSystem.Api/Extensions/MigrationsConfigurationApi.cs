@@ -1,6 +1,5 @@
 ﻿using LinkShorteningSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace LinkShorteningSystem.Api.Extensions
 {

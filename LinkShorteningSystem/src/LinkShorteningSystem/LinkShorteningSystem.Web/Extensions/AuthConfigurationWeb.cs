@@ -55,12 +55,6 @@ namespace LinkShorteningSystem.Web.Extensions
                 options.LoginPath = "/Account/Login";
                 options.AccessDeniedPath = "/Account/Register";
             });
-
-            //    services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            //.AddCookie(options => //CookieAuthenticationOptions
-            //{
-            //    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-            //});
         }
     }
 }

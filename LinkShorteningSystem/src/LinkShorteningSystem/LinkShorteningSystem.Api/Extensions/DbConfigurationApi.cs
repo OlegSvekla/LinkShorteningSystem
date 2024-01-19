@@ -11,7 +11,6 @@ namespace LinkShorteningSystem.Web.Extensions
         {
             services.AddDbContext<CatalogDbContext>(context => 
                 context.UseSqlServer(configuration.GetConnectionString("CatalogConnection")));
-
         }
     }
 }
